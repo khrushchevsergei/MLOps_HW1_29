@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: my_app_database
+    image: postgres
+    networks:
+      - app_network
+    restart: always
+    environment:
+      POSTGRES_DB: mlops_db
+      POSTGRES_USER: mlopls
+      POSTGRES_PASSWORD: ops
+    ports:
+      - "5432:5432"
+
+  app:
+    container_name: my_app
+    image: sergeikhrushchev/mlops
+    restart: always
+    networks:
+      - app_network
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    ports:
+      - "80:80"
+
+networks:
+  app_network:
+    driver: bridge

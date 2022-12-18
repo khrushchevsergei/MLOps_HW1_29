@@ -3,6 +3,7 @@ import flask
 from flask_restx import Api, fields, Resource
 from Model_Warehouse import SaveModel, AddModel, LoadModel, FitModel, MakePrediction, DeleteModel
 import json
+import data_base
 
 app = flask.Flask(__name__)
 api = Api(app, title='API ML model using Flask')
@@ -25,6 +26,14 @@ parameters_for_prediction = api.model('Insert parameters to make a prediction',
 
 deleting_the_model = api.model('Insert parameter to delete the model',
                             {'model_ID': fields.Integer(description='Type: Model ID', example=1)})
+
+
+def Postgres_database():
+    engine = create_engine('postgresql://sergeikhrushchev@localhost:5432/sample_db')
+    df = pd.DataFrame(columns=['model_ID', 'Model_Class'])
+    df.to_sql('models', con=engine, if_exists='replace')
+
+engine = Postgres_database()
 
 
 @api.route('/models_lib')
@@ -101,4 +110,4 @@ class DeletingModel(Resource):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=80)
