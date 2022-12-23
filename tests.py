@@ -5,6 +5,46 @@ from sqlalchemy.exc import ProgrammingError
 from clothes_shop import application_setup
 import Basic_Trainer
 
+from unittest import TestCase
+from Basic_Trainer import (
+    model_ID,
+    get_params
+)
+
+from werkzeug.exceptions import NotFound
+
+
+class Model_Test_1(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        os.environ['TEST'] = '1'
+
+    def test_get(self):
+        gmr = model_ID()
+
+        with self.assertRaises(NotFound):
+            gmr.get('Error with type')
+
+        self.assertDictEqual(gmr.get('classification'), {
+            'model_names': ['LogisticRegression', 'GradientBoostingClassifier']
+        })
+
+
+class Model_test_2(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        os.environ['TEST'] = '1'
+
+    def test_get(self):
+        ghpr = get_params()
+
+        self.assertIn('model_params', ghpr.get('LogisticRegression'))
+
+        with self.assertRaises(NotFound):
+            ghpr.get('Wrong Type')
+
+
+
 # Tests for database
 
 
